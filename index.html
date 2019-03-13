@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>Cues</title>
+	<style>
+		.red {
+			color: red;
+		}
+	</style>
+</head>
+<body>
+	<main id="app">
+		<fieldset>
+			<details>
+				<summary>
+					<legend>Audio settings</legend>
+				</summary>
+				<div>
+					<p>
+						<label for="startThreshold">Start Threshold (dB)</label>
+						<input id="startThreshold" type="number" v-model.number="startThreshold" min="-96" max="0">
+					</p>
+					<p>
+						<label for="nextThreshold">Next Threshold (dB)</label>
+						<input id="nextThreshold" type="number" v-model.number="nextThreshold" min="-96" max="0">
+					</p>
+					<p>
+						<label for="endThreshold">End Threshold (dB)</label>
+						<input id="endThreshold" type="number" v-model.number="endThreshold" min="-96" max="0">
+					</p>
+					<p>
+						<label for="bufferSize">Buffer size</label>
+						<select id="bufferSize" v-model.number="bufferSize">
+							<option v-for="size in sizes" :value="size" v-text="size"></option>
+						</select>
+					</p>
+				</div>
+			</details>
+		</fieldset>
+		<fieldset>
+			<details open>
+				<summary>
+					<legend>Management and transport</legend>
+				</summary>
+				<p class="uploader">
+					<input type="file" ref="file" @change="processFile">
+				</p>
+				<p>
+					<button type="button" @click="play">Play</button>
+					<button type="button" @click="stop">Stop</button>
+				</p>
+			</details>
+		</fieldset>
+		<fieldset>
+			<details open>
+				<summary>
+					<legend>Playlist</legend>
+				</summary>
+				<div class="playlist" v-if="playlist">
+					<div class="audio" v-for="(audio, index) in playlist.audios" :class="{red: audio.isPlaying()}">
+						<div class="audio__filename"><strong v-text="audio.data.name"></strong></div>
+						<div class="audio__cue__start">Start: <span v-text="audio.data.cues.start"></span></div>
+						<div class="audio__cue__next">Next: <span v-text="audio.data.cues.next"></span></div>
+						<div class="audio__cue__end">End: <span v-text="audio.data.cues.end"></span></div>
+						<div class="audio__cue__position">Position: <span v-text="audio.audio.currentTime"></span></div>
+						<div class="audio__cue__length">Length: <span v-text="audio.audio.duration"></span></div>
+						<p>
+							<button type="button" @click="recompute(index)">Recompute cues</button>
+							<button type="button" @click="moveToUp(index)">↑</button>
+							<button type="button" @click="moveToDown(index)">↓</button>
+							<button type="button" @click="removeFromPlaylist(index)">Remove</button>
+						</p>
+					</div>
+					<div class="loading" v-if="loading">Loading…</div>
+				</div>
+			</details>
+		</fieldset>
+	</main>
+	<script src="//unpkg.com/vue"></script>
+	<script src="app.js" type="module"></script>
+</body>
+</html>
